@@ -1,4 +1,4 @@
-package sample;
+package dk.easv;
 
 import java.io.File;
 import java.net.URL;

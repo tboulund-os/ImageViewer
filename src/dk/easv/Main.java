@@ -1,4 +1,4 @@
-package sample;
+package dk.easv;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
