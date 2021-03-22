@@ -1,22 +1,18 @@
 package dk.easv;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-public class ImageViewerWindowController implements Initializable
+public class ImageViewerWindowController
 {
     private final List<Image> images = new ArrayList<>();
     private int currentImageIndex = 0;
@@ -25,17 +21,9 @@ public class ImageViewerWindowController implements Initializable
     Parent root;
 
     @FXML
-    private Button btnLoad;
-
-    @FXML
-    private Button btnPrevious;
-
-    @FXML
-    private Button btnNext;
-
-    @FXML
     private ImageView imageView;
 
+    @FXML
     private void handleBtnLoadAction(ActionEvent event)
     {
         FileChooser fileChooser = new FileChooser();
@@ -54,6 +42,7 @@ public class ImageViewerWindowController implements Initializable
         }
     }
 
+    @FXML
     private void handleBtnPreviousAction(ActionEvent event)
     {
         if (!images.isEmpty())
@@ -64,6 +53,7 @@ public class ImageViewerWindowController implements Initializable
         }
     }
 
+    @FXML
     private void handleBtnNextAction(ActionEvent event)
     {
         if (!images.isEmpty())
@@ -80,24 +70,4 @@ public class ImageViewerWindowController implements Initializable
             imageView.setImage(images.get(currentImageIndex));
         }
     }
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb)
-    {
-        btnLoad.setOnAction((ActionEvent event) ->
-        {
-            handleBtnLoadAction(event);
-        });
-
-        btnPrevious.setOnAction((ActionEvent event) ->
-        {
-            handleBtnPreviousAction(event);
-        });
-
-        btnNext.setOnAction((ActionEvent event) ->
-        {
-            handleBtnNextAction(event);
-        });
-    }
-
 }
