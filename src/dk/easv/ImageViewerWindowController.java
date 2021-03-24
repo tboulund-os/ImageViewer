@@ -24,7 +24,7 @@ public class ImageViewerWindowController
     private ImageView imageView;
 
     @FXML
-    private void handleBtnLoadAction(ActionEvent event)
+    private void handleBtnLoadAction()
     {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select image files");
@@ -43,7 +43,7 @@ public class ImageViewerWindowController
     }
 
     @FXML
-    private void handleBtnPreviousAction(ActionEvent event)
+    private void handleBtnPreviousAction()
     {
         if (!images.isEmpty())
         {
@@ -54,7 +54,7 @@ public class ImageViewerWindowController
     }
 
     @FXML
-    private void handleBtnNextAction(ActionEvent event)
+    private void handleBtnNextAction()
     {
         if (!images.isEmpty())
         {
