@@ -3,13 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1091.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ImageViewerWindowController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1091.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ImageViewerWindowController">
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1091.0" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1091.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
                 <ButtonBar prefHeight="57.0" prefWidth="388.0">
                     <buttons>
@@ -26,6 +27,13 @@
                         <Button id="btnNext" fx:id="btnNext" mnemonicParsing="false" onAction="#handleBtnNextAction" text="Next" />
                     </buttons>
                 </ButtonBar>
+            <Slider fx:id="valueSlider" max="20.0" onDragDropped="#handleChangeValueSlider" showTickLabels="true" showTickMarks="true" />
+            <ButtonBar prefHeight="58.0" prefWidth="160.0">
+              <buttons>
+                <Button mnemonicParsing="false" onAction="#handlePlayBtn" text="Play" />
+                  <Button mnemonicParsing="false" onAction="#handleStopBtn" text="Stop" />
+              </buttons>
+            </ButtonBar>
             </children>
             <opaqueInsets>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

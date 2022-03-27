@@ -3,11 +3,18 @@ package dk.easv;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -15,6 +22,15 @@ import javafx.stage.Stage;
 public class ImageViewerWindowController
 {
     private final List<Image> images = new ArrayList<>();
+    @FXML
+    private Slider valueSlider;
+    @FXML
+    private Button btnLoad;
+    @FXML
+    private Button btnPrevious;
+    @FXML
+    private Button btnNext;
+
     private int currentImageIndex = 0;
 
     @FXML
@@ -22,6 +38,8 @@ public class ImageViewerWindowController
 
     @FXML
     private ImageView imageView;
+
+    ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
     @FXML
     private void handleBtnLoadAction()
@@ -69,5 +87,25 @@ public class ImageViewerWindowController
         {
             imageView.setImage(images.get(currentImageIndex));
         }
+    }
+
+    public void handleChangeValueSlider(DragEvent dragEvent) {
+
+    }
+
+    public void handlePlayBtn(ActionEvent actionEvent) {
+        executor.scheduleAtFixedRate(aRunnable, 0, (long) valueSlider.getValue(), TimeUnit.SECONDS);
+    }
+
+    Runnable aRunnable = new Runnable() {
+        @Override
+        public void run() {
+            handleBtnNextAction();
+        }
+    };
+
+    public void handleStopBtn(ActionEvent actionEvent) {
+        if (!executor.isShutdown())
+            executor.shutdown();
     }
 }
