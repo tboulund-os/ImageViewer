@@ -14,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -39,7 +38,11 @@ public class ImageViewerWindowController
     @FXML
     private ImageView imageView;
 
-    ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    ScheduledExecutorService executor;
+
+    public ImageViewerWindowController(){
+        executor= Executors.newScheduledThreadPool(1);
+    }
 
     @FXML
     private void handleBtnLoadAction()
@@ -54,6 +57,7 @@ public class ImageViewerWindowController
         {
             files.forEach((File f) ->
             {
+                f.getName();
                 images.add(new Image(f.toURI().toString()));
             });
             displayImage();
@@ -89,11 +93,20 @@ public class ImageViewerWindowController
         }
     }
 
-    public void handleChangeValueSlider(DragEvent dragEvent) {
+    public void handleStartChangeValueSlider() {
+        stopRunning();
+    }
 
+    public void handleStopChangeValueSlider() {
+        startRunning();
     }
 
     public void handlePlayBtn(ActionEvent actionEvent) {
+        startRunning();
+    }
+
+    private void startRunning() {
+        executor= Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(aRunnable, 0, (long) valueSlider.getValue(), TimeUnit.SECONDS);
     }
 
@@ -105,7 +118,11 @@ public class ImageViewerWindowController
     };
 
     public void handleStopBtn(ActionEvent actionEvent) {
-        if (!executor.isShutdown())
-            executor.shutdown();
+        stopRunning();
     }
+
+    private void stopRunning() {
+        executor.shutdown();
+    }
+
 }

@@ -27,7 +27,7 @@
                         <Button id="btnNext" fx:id="btnNext" mnemonicParsing="false" onAction="#handleBtnNextAction" text="Next" />
                     </buttons>
                 </ButtonBar>
-            <Slider fx:id="valueSlider" max="20.0" onDragDropped="#handleChangeValueSlider" showTickLabels="true" showTickMarks="true" />
+            <Slider fx:id="valueSlider" max="20.0" min="1.0" onMousePressed="#handleStartChangeValueSlider" onMouseReleased="#handleStopChangeValueSlider" showTickLabels="true" showTickMarks="true" />
             <ButtonBar prefHeight="58.0" prefWidth="160.0">
               <buttons>
                 <Button mnemonicParsing="false" onAction="#handlePlayBtn" text="Play" />
@@ -42,9 +42,9 @@
     </top>
     <center>
         <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <center>
-                <ImageView fx:id="imageView" fitHeight="647.0" fitWidth="1090.0" pickOnBounds="true" preserveRatio="true" />
-            </center>
+         <top>
+                <ImageView fx:id="imageView" fitHeight="647.0" fitWidth="1090.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+         </top>
         </BorderPane>
     </center>
 </BorderPane>
