@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,7 +21,8 @@ import javafx.stage.Stage;
 
 public class ImageViewerWindowController
 {
-    private final List<Image> images = new ArrayList<>();
+    private final List<ImageReference> images = new ArrayList<>();
+    public Label fileLabel;
     @FXML
     private Slider valueSlider;
     @FXML
@@ -57,8 +59,9 @@ public class ImageViewerWindowController
         {
             files.forEach((File f) ->
             {
-                f.getName();
-                images.add(new Image(f.toURI().toString()));
+                Image image = new Image(f.toURI().toString());
+                String name = f.getName();
+                images.add(new ImageReference(image,name));
             });
             displayImage();
         }
@@ -89,7 +92,9 @@ public class ImageViewerWindowController
     {
         if (!images.isEmpty())
         {
-            imageView.setImage(images.get(currentImageIndex));
+            ImageReference reference = images.get(currentImageIndex);
+            imageView.setImage(reference.getImage());
+            fileLabel.setText(reference.getFileName());
         }
     }
 
