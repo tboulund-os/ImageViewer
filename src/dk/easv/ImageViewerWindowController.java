@@ -3,10 +3,9 @@ package dk.easv;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -21,7 +20,6 @@ import javafx.stage.Stage;
 
 public class ImageViewerWindowController
 {
-    private final List<ImageReference> images = new ArrayList<>();
     public Label fileLabel;
     @FXML
     private Slider valueSlider;
@@ -31,29 +29,38 @@ public class ImageViewerWindowController
     private Button btnPrevious;
     @FXML
     private Button btnNext;
-
-    private int currentImageIndex = 0;
-
     @FXML
     Parent root;
 
     @FXML
     private ImageView imageView;
-
+    private int currentImageIndex = 0;
     ScheduledExecutorService executor;
+
+    List<ImageReference> slideList;
+    BlockingQueue<List<ImageReference>> blockingQueue;
+    Scheduler scheduler;
+    Thread schedulerThread;
 
     public ImageViewerWindowController(){
         executor= Executors.newScheduledThreadPool(1);
+        blockingQueue = new ArrayBlockingQueue<>(3);
+        scheduler = new Scheduler(blockingQueue,this);
+        schedulerThread = new Thread(scheduler);
+        System.out.println(Thread.currentThread().getName());
     }
 
     @FXML
-    private void handleBtnLoadAction()
-    {
+    private void handleBtnLoadAction() throws InterruptedException {
+        List<ImageReference> images = new ArrayList<>();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select image files");
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Images",
                 "*.png", "*.jpg", "*.gif", "*.tif", "*.bmp"));
         List<File> files = fileChooser.showOpenMultipleDialog(new Stage());
+
+        if (files==null)
+            return;
 
         if (!files.isEmpty())
         {
@@ -63,17 +70,19 @@ public class ImageViewerWindowController
                 String name = f.getName();
                 images.add(new ImageReference(image,name));
             });
-            displayImage();
+            //displayImage();
         }
+
+        blockingQueue.put(images);
     }
 
     @FXML
     private void handleBtnPreviousAction()
     {
-        if (!images.isEmpty())
+        if (!slideList.isEmpty())
         {
             currentImageIndex =
-                    (currentImageIndex - 1 + images.size()) % images.size();
+                    (currentImageIndex - 1 + slideList.size()) % slideList.size();
             displayImage();
         }
     }
@@ -81,18 +90,18 @@ public class ImageViewerWindowController
     @FXML
     private void handleBtnNextAction()
     {
-        if (!images.isEmpty())
+        if (!slideList.isEmpty())
         {
-            currentImageIndex = (currentImageIndex + 1) % images.size();
+            currentImageIndex = (currentImageIndex + 1) % slideList.size();
             displayImage();
         }
     }
 
     private void displayImage()
     {
-        if (!images.isEmpty())
+        if (slideList!=null || !slideList.isEmpty())
         {
-            ImageReference reference = images.get(currentImageIndex);
+            ImageReference reference = slideList.get(currentImageIndex);
             imageView.setImage(reference.getImage());
             fileLabel.setText(reference.getFileName());
         }
@@ -113,12 +122,18 @@ public class ImageViewerWindowController
     private void startRunning() {
         executor= Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(aRunnable, 0, (long) valueSlider.getValue(), TimeUnit.SECONDS);
+        schedulerThread.start();
     }
 
     Runnable aRunnable = new Runnable() {
         @Override
         public void run() {
-            handleBtnNextAction();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    handleBtnNextAction();
+                }
+            });
         }
     };
 
@@ -128,6 +143,11 @@ public class ImageViewerWindowController
 
     private void stopRunning() {
         executor.shutdown();
+        schedulerThread.interrupt();
     }
 
+    public void changeSlideList(List<ImageReference> firstInQueue) {
+        slideList = firstInQueue;
+        currentImageIndex = 0;
+    }
 }
