@@ -22,7 +22,7 @@ public class Scheduler implements Runnable{
                 blockingQueue.put(firstInQueue);
                 controller.changeSlideList(firstInQueue);
                 sleep();
-                System.out.println("still here");
+                //System.out.println("still here");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

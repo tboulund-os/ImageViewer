@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 public class ImageViewerWindowController
 {
     public Label fileLabel;
+    public PieChart pieChart;
     @FXML
     private Slider valueSlider;
     @FXML
@@ -38,7 +40,7 @@ public class ImageViewerWindowController
     ScheduledExecutorService executor;
 
     List<ImageReference> slideList;
-    BlockingQueue<List<ImageReference>> blockingQueue;
+    BlockingQueue<List<ImageReference>> blockingQueue; //Queue of different slideshows
     Scheduler scheduler;
     Thread schedulerThread;
 
@@ -47,7 +49,7 @@ public class ImageViewerWindowController
         blockingQueue = new ArrayBlockingQueue<>(3);
         scheduler = new Scheduler(blockingQueue,this);
         schedulerThread = new Thread(scheduler);
-        System.out.println(Thread.currentThread().getName());
+        //System.out.println(Thread.currentThread().getName());
     }
 
     @FXML
@@ -68,7 +70,7 @@ public class ImageViewerWindowController
             {
                 Image image = new Image(f.toURI().toString());
                 String name = f.getName();
-                images.add(new ImageReference(image,name));
+                images.add(new ImageReference(image,name));//Create Imagerefference object with both image and filename
             });
             //displayImage();
         }
@@ -104,6 +106,7 @@ public class ImageViewerWindowController
             ImageReference reference = slideList.get(currentImageIndex);
             imageView.setImage(reference.getImage());
             fileLabel.setText(reference.getFileName());
+            pieChart.setData(reference.getData());
         }
     }
 
@@ -121,7 +124,8 @@ public class ImageViewerWindowController
 
     private void startRunning() {
         executor= Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(aRunnable, 0, (long) valueSlider.getValue(), TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(aRunnable, 0, (long) valueSlider.getValue()*2, TimeUnit.SECONDS);
+        schedulerThread = new Thread(scheduler);
         schedulerThread.start();
     }
 
